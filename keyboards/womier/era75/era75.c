@@ -104,6 +104,11 @@ const snled27351_led_t PROGMEM g_snled27351_leds[SNLED27351_LED_COUNT] = {
     {0, CB4_CA15,   CB5_CA15,   CB6_CA15},
     {1, CB4_CA6,    CB5_CA6,    CB6_CA6},
     {1, CB4_CA5,    CB5_CA5,    CB6_CA5},
+    {1, CB4_CA11,   CB5_CA11,   CB6_CA11},
+    {1, CB4_CA12,   CB5_CA12,   CB6_CA12},
+    {1, CB4_CA8,    CB5_CA8,    CB6_CA8},
+    {1, CB4_CA9,    CB5_CA9,    CB6_CA9},
+    {1, CB4_CA10,   CB5_CA10,   CB6_CA10},
 };
 #endif
 
@@ -466,6 +471,7 @@ bool rgb_matrix_indicators_advanced_kb(uint8_t led_min, uint8_t led_max) {
 
     if (host_keyboard_led_state().caps_lock) {
         rgb_matrix_set_color(44, 0x77, 0x77, 0x77);
+        rgb_matrix_set_color(85, 0x77, 0x77, 0x77);
     }
 
 #    ifdef WIRELESS_ENABLE
