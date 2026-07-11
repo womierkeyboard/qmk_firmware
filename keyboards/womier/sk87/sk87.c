@@ -213,6 +213,37 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
 #ifdef RGB_MATRIX_ENABLE
 
+#    include "ws2812.h"
+
+/* The side-bar/corner LEDs (LED_FLAG_UNDERGLOW, last 13 in the chain) use a
+ * different LED chip than the per-key LEDs: it latches red/green in the
+ * opposite order, so a plain WS2812 driver shows red as green on the corners.
+ * Swap the two channels for those LEDs only. */
+static void sk87_ws2812_init(void) {
+    ws2812_init();
+}
+
+static void sk87_ws2812_set_color(int index, uint8_t red, uint8_t green, uint8_t blue) {
+    if (g_led_config.flags[index] & LED_FLAG_UNDERGLOW) {
+        ws2812_set_color(index, green, red, blue);
+    } else {
+        ws2812_set_color(index, red, green, blue);
+    }
+}
+
+static void sk87_ws2812_set_color_all(uint8_t red, uint8_t green, uint8_t blue) {
+    for (int i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
+        sk87_ws2812_set_color(i, red, green, blue);
+    }
+}
+
+const rgb_matrix_driver_t rgb_matrix_driver = {
+    .init          = sk87_ws2812_init,
+    .flush         = ws2812_flush,
+    .set_color     = sk87_ws2812_set_color,
+    .set_color_all = sk87_ws2812_set_color_all,
+};
+
 #    ifdef WIRELESS_ENABLE
 bool wls_rgb_indicator_reset        = false;
 uint32_t wls_rgb_indicator_timer    = 0x00;

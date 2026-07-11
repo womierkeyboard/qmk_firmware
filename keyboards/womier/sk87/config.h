@@ -31,3 +31,7 @@
 
 #define RGB_MATRIX_FRAMEBUFFER_EFFECTS
 #define RGB_MATRIX_KEYPRESSES
+
+/* The RGB matrix driver is "custom" (see sk87.c), so the WS2812 driver is
+ * pulled in manually and needs its LED count defined explicitly. */
+#define WS2812_LED_COUNT RGB_MATRIX_LED_COUNT
