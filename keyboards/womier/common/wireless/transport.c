@@ -21,7 +21,7 @@ void wls_transport_enable(bool enable) {
     if (enable) {
         if (host_get_driver() != &wireless_driver) {
             host_set_driver(&wireless_driver);
-            keyboard_protocol = true; // default with true
+            usb_device_state_set_protocol(USB_PROTOCOL_REPORT); // default with report protocol
         }
     } else {
         if (*md_getp_state() == MD_STATE_CONNECTED) {
