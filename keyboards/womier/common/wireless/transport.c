@@ -15,13 +15,18 @@ extern host_driver_t wireless_driver;
 
 static transport_t transport = TRANSPORT_USB;
 
+/* HID protocol negotiated by the USB host, saved while wireless is active.
+ * The wireless driver always reports in Report protocol (NKRO capable). */
+static usb_hid_protocol_t usb_saved_protocol = USB_PROTOCOL_REPORT;
+
 void wls_transport_enable(bool enable) __attribute__((weak));
 void wls_transport_enable(bool enable) {
 
     if (enable) {
         if (host_get_driver() != &wireless_driver) {
+            usb_saved_protocol = usb_device_state_get_protocol();
             host_set_driver(&wireless_driver);
-            keyboard_protocol = true; // default with true
+            usb_device_state_set_protocol(USB_PROTOCOL_REPORT);
         }
     } else {
         if (*md_getp_state() == MD_STATE_CONNECTED) {
@@ -54,6 +59,13 @@ void usb_transport_enable(bool enable) {
             restart_usb_driver(&USBD1);
 #endif
             host_set_driver(&chibios_driver);
+#if defined(KEEP_USB_CONNECTION_IN_WIRELESS_MODE)
+            /* No USB reset happens, so give back the protocol the host negotiated. */
+            usb_device_state_set_protocol(usb_saved_protocol);
+#else
+            /* USB was restarted: the host re-enumerates and starts in Report protocol. */
+            usb_device_state_set_protocol(USB_PROTOCOL_REPORT);
+#endif
         }
     } else {
         if (USB_DRIVER.state == USB_ACTIVE) {
