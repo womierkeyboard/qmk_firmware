@@ -4,7 +4,11 @@
 #pragma once
 
 #ifdef WIRELESS_ENABLE
-#    define LPWR_TIMEOUT RGB_MATRIX_TIMEOUT
+/* MCU deep-sleep timeout in wireless modes, independent of the RGB-off
+ * timeout so the keyboard keeps scanning (no swallowed wake-up keypress)
+ * after the lights go dark. Matches the wireless module's own 30 min sleep.
+ * In 2.4G mode the keyboard also sleeps immediately when the PC suspends. */
+#    define LPWR_TIMEOUT 1800000
 #    define WLS_KEYBOARD_REPORT_KEYS 5
 
 #endif
